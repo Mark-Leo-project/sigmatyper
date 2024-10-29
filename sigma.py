@@ -21,7 +21,7 @@ def on_press(key):
     except AttributeError:
         pass
 
-def autotype_with_mistakes(typing_speed, mistake_chance, words_file):
+def autotype_with_mistakes(min_speed, max_speed, mistake_chance, words_file):
     global typing_interrupted
     typing_interrupted = False
 
@@ -61,15 +61,15 @@ def autotype_with_mistakes(typing_speed, mistake_chance, words_file):
             mistake_word = random.choice(words)
             for char in mistake_word:
                 pyautogui.typewrite(char)
-                time.sleep(typing_speed)
+                time.sleep(random.uniform(min_speed, max_speed))
             # Backspace over the mistake
             for _ in mistake_word:
                 pyautogui.press('backspace')
-                time.sleep(typing_speed)
+                time.sleep(random.uniform(min_speed, max_speed))
 
         # Type the next character from clipboard_text
         pyautogui.typewrite(clipboard_text[i])
-        time.sleep(typing_speed)
+        time.sleep(random.uniform(min_speed, max_speed))
         
         i += 1
 
@@ -78,18 +78,25 @@ def autotype_with_mistakes(typing_speed, mistake_chance, words_file):
 
 def start_typing():
     try:
-        typing_speed = float(speed_entry.get())
+        min_speed = float(min_speed_entry.get())
+        max_speed = float(max_speed_entry.get())
         mistake_chance = float(mistake_entry.get())
         
         # Input validation
-        if not (0.01 <= typing_speed <= 1):
-            messagebox.showerror("Error", "Typing speed must be between 0.01 and 1")
+        if not (0.01 <= min_speed <= 1):
+            messagebox.showerror("Error", "Minimum typing speed must be between 0.01 and 1")
+            return
+        if not (0.01 <= max_speed <= 1):
+            messagebox.showerror("Error", "Maximum typing speed must be between 0.01 and 1")
+            return
+        if min_speed > max_speed:
+            messagebox.showerror("Error", "Minimum typing speed must be less than or equal to maximum typing speed")
             return
         if not (0 <= mistake_chance <= 1):
             messagebox.showerror("Error", "Mistake chance must be between 0 and 1")
             return
 
-        threading.Thread(target=autotype_with_mistakes, args=(typing_speed, mistake_chance, words_file)).start()
+        threading.Thread(target=autotype_with_mistakes, args=(min_speed, max_speed, mistake_chance, words_file)).start()
     except ValueError:
         messagebox.showerror("Error", "Please enter valid numbers")
 
@@ -110,12 +117,19 @@ root.title("AutoTyper")
 frame = ttk.Frame(root, padding="10")
 frame.pack(fill=tk.BOTH, expand=True)
 
-# Typing Speed input
-speed_label = ttk.Label(frame, text="Typing Speed (seconds between keystrokes):")
-speed_label.pack(pady=5)
-speed_entry = ttk.Entry(frame)
-speed_entry.insert(0, "0.05")  # Default value
-speed_entry.pack(pady=5)
+# Minimum Typing Speed input
+min_speed_label = ttk.Label(frame, text="Minimum Typing Speed (seconds between keystrokes):")
+min_speed_label.pack(pady=5)
+min_speed_entry = ttk.Entry(frame)
+min_speed_entry.insert(0, "0.03")  # Default value
+min_speed_entry.pack(pady=5)
+
+# Maximum Typing Speed input
+max_speed_label = ttk.Label(frame, text="Maximum Typing Speed (seconds between keystrokes):")
+max_speed_label.pack(pady=5)
+max_speed_entry = ttk.Entry(frame)
+max_speed_entry.insert(0, "0.1")  # Default value
+max_speed_entry.pack(pady=5)
 
 # Mistake Chance input
 mistake_label = ttk.Label(frame, text="Mistake Chance (0 to 1):")
@@ -131,6 +145,17 @@ start_button.pack(pady=20)
 # Add a help text
 help_text = ttk.Label(frame, text="Press ESC to stop typing", font=("Arial", 8))
 help_text.pack(pady=5)
+
+# Add separator
+ttk.Separator(frame, orient='horizontal').pack(fill='x', pady=10)
+
+# Add version and GitHub link
+version_text = ttk.Label(frame, text="v0.2", font=("Arial", 8))
+version_text.pack(side='bottom', pady=2)
+
+github_link = ttk.Label(frame, text="GitHub", font=("Arial", 8), foreground="blue", cursor="hand2")
+github_link.pack(side='bottom', pady=2)
+github_link.bind("<Button-1>", lambda e: os.system("start https://github.com/metrospeed/sigmatyper/tree/main"))
 
 # Run the GUI event loop
 root.mainloop()
