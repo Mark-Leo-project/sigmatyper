@@ -8,6 +8,9 @@ from tkinter import ttk, messagebox
 from pynput import keyboard
 import sys
 import os
+import requests
+import shutil
+
 
 # Global flag to control typing interruption
 typing_interrupted = False
@@ -108,6 +111,59 @@ else:
 
 # Path to words.txt
 words_file = os.path.join(application_path, 'words.txt')
+
+# Define constants for your GitHub repository and current version
+REPO_OWNER = "metrospeed"
+REPO_NAME = "sigmatyper"
+CURRENT_VERSION = "v0.3"  # Update this with each release
+
+def get_latest_release():
+    """Fetch the latest release version and download URL from GitHub."""
+    url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/releases/latest"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        release_data = response.json()
+        return release_data["tag_name"], release_data["assets"][0]["browser_download_url"]
+    except requests.RequestException as e:
+        messagebox.showerror("Error", f"Failed to check for updates: {e}")
+        return None, None
+
+def download_and_replace_exe(download_url):
+    """Download and replace the current executable with the latest version."""
+    try:
+        response = requests.get(download_url, stream=True)
+        response.raise_for_status()
+        # Write the new version to a temporary file
+        with open("update_temp.exe", "wb") as temp_file:
+            shutil.copyfileobj(response.raw, temp_file)
+        
+        # Replace the current executable with the new one
+        current_exe = sys.argv[0]
+        os.remove(current_exe)  # Delete current .exe
+        os.rename("update_temp.exe", current_exe)  # Replace with new version
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to download the update: {e}")
+
+def check_for_update():
+    """Check if a new version is available and update if necessary."""
+    latest_version, download_url = get_latest_release()
+    
+    if latest_version and latest_version != CURRENT_VERSION:
+        user_response = messagebox.askyesno(
+            "Update Available",
+            f"A new version ({latest_version}) is available. Do you want to update?"
+        )
+        if user_response:
+            download_and_replace_exe(download_url)
+            messagebox.showinfo("Update", "Update complete. Please restart the application.")
+            sys.exit()  # Exit the current instance to apply the update
+    else:
+        print("You are using the latest version.")
+
+# Run update check at startup
+check_for_update()
+
 
 # Create the GUI application
 root = tk.Tk()
