@@ -4,4 +4,4 @@ Download the pre compiled exe here: https://github.com/metrospeed/sigmatyper/rel
 
 ## Bulid it yourself
 
-    pyinstaller --onefile --windowed --add-data "words.txt;." sigma.py
+    soon
