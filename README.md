@@ -4,4 +4,4 @@ Download the pre compiled exe here: https://github.com/metrospeed/sigmatyper/rel
 
 ## Bulid it yourself
 
-    soon
+    pyinstaller --onefile --windowed sigma.py
