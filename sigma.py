@@ -48,7 +48,6 @@ def check_for_update():
     except Exception as e:
         messagebox.showerror("Error", f"Update check failed: {e}")
 
-
 def autotype_with_errors(typing_speed_range, mistake_chance, words_text):
     # Activate target window (the currently active window)
     time.sleep(1)  # Brief pause to allow user to switch to the target window if needed
@@ -92,7 +91,6 @@ def autotype_with_errors(typing_speed_range, mistake_chance, words_text):
 
     messagebox.showinfo("Typing Complete", "The typing task has been successfully completed.")
 
-
 def type_word(word, typing_speed_range):
     for char in word:
         if keyboard.is_pressed('esc'):
@@ -100,7 +98,6 @@ def type_word(word, typing_speed_range):
         typing_speed = random.uniform(typing_speed_range[0], typing_speed_range[1])
         time.sleep(typing_speed)
         pyautogui.typewrite(char)
-
 
 def introduce_typo(word):
     typo_types = ['omit', 'transpose', 'repeat', 'wrong_letter']
@@ -114,29 +111,27 @@ def introduce_typo(word):
 
     if typo_choice == 'omit':
         # Omit a letter
-        incorrect_word = word[:index] + word[index + 1:]
+        incorrect_word = word[:index] + word[index+1:]
     elif typo_choice == 'transpose' and index < len(word) - 1:
         # Transpose two adjacent letters
-        incorrect_word = word[:index] + word[index + 1] + word[index] + word[index + 2:]
+        incorrect_word = word[:index] + word[index+1] + word[index] + word[index+2:]
     elif typo_choice == 'repeat':
         # Repeat a letter
-        incorrect_word = word[:index + 1] + word[index] + word[index + 1:]
+        incorrect_word = word[:index+1] + word[index] + word[index+1:]
     elif typo_choice == 'wrong_letter':
         # Replace a letter with a wrong one
         wrong_char = random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
-        incorrect_word = word[:index] + wrong_char + word[index + 1:]
+        incorrect_word = word[:index] + wrong_char + word[index+1:]
     else:
         incorrect_word = word  # Fallback to original word if something goes wrong
 
     return incorrect_word, mistake_index
-
 
 def start_typing_with_delay():
     start_button.config(state="disabled")
     start_button.config(text="Starting in 3 seconds...")
     messagebox.showinfo("Typing Starting Soon", "Click where you want to type. Starting in 3 seconds.")
     root.after(3000, start_typing)
-
 
 def start_typing():
     typing_speed_min = speed_slider_min.get() / 1000  # Convert ms to seconds
@@ -153,10 +148,7 @@ def start_typing():
                 try:
                     from docx import Document
                 except ImportError:
-                    messagebox.showerror(
-                        "Error",
-                        "python-docx module not found. Please install it using 'pip install python-docx'"
-                    )
+                    messagebox.showerror("Error", "python-docx module not found. Please install it using 'pip install python-docx'")
                     start_button.config(state="normal", text="Start Typing")
                     return
                 doc = Document(words_file_path)
@@ -165,10 +157,7 @@ def start_typing():
                 try:
                     import PyPDF2
                 except ImportError:
-                    messagebox.showerror(
-                        "Error",
-                        "PyPDF2 module not found. Please install it using 'pip install PyPDF2'"
-                    )
+                    messagebox.showerror("Error", "PyPDF2 module not found. Please install it using 'pip install PyPDF2'")
                     start_button.config(state="normal", text="Start Typing")
                     return
                 with open(words_file_path, 'rb') as file:
@@ -194,10 +183,7 @@ def start_typing():
         if not words_text:
             words_text = pyperclip.paste()
         if not words_text.strip():
-            messagebox.showerror(
-                "Error",
-                "No text available. Please enter text, copy text, or select a file."
-            )
+            messagebox.showerror("Error", "No text available. Please enter text, copy text, or select a file.")
             start_button.config(state="normal", text="Start Typing")
             return
 
@@ -207,7 +193,6 @@ def start_typing():
         words_text=words_text
     )
     start_button.config(state="normal", text="Start Typing")
-
 
 def select_words_file():
     global words_file_path
@@ -221,18 +206,14 @@ def select_words_file():
             ("All Files", "*.*")
         ]
     )
-    words_file_label.config(
-        text=f"Selected file: {os.path.basename(words_file_path)}" if words_file_path else "No file selected"
-    )
+    words_file_label.config(text=f"Selected file: {os.path.basename(words_file_path)}" if words_file_path else "No file selected")
     save_settings()
-
 
 def clear_words_file():
     global words_file_path
     words_file_path = ""
     words_file_label.config(text="No file selected")
     save_settings()
-
 
 def save_settings():
     settings = {
@@ -244,7 +225,6 @@ def save_settings():
     }
     with open('settings.json', 'w', encoding='utf-8') as f:
         json.dump(settings, f)
-
 
 def load_settings():
     global words_file_path
@@ -267,21 +247,17 @@ def load_settings():
         speed_slider_max.set(100)
         mistake_slider.set(10)
 
-
 def update_speed_min_label(value):
     speed_slider_min_value_label.config(text=f"{int(float(value))} ms")
     save_settings()
-
 
 def update_speed_max_label(value):
     speed_slider_max_value_label.config(text=f"{int(float(value))} ms")
     save_settings()
 
-
 def update_mistake_slider_label(value):
     mistake_slider_value_label.config(text=f"{int(float(value))}%")
     save_settings()
-
 
 # Function to get the resource path (useful when bundled with PyInstaller)
 def resource_path(relative_path):
@@ -292,7 +268,6 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
-
 
 # Initialize GUI
 root = ttk.Window(themename="darkly")
@@ -315,172 +290,104 @@ style.configure("Custom.TButton", font=("Helvetica", 12, "bold"))
 style.configure("Custom.Small.TButton", font=("Helvetica", 8, "bold"), padding=2)
 style.configure("Custom.TLabel", font=("Helvetica", 10), foreground=style.colors.light)
 
-# Define standard padding
-standard_pad = 10
+# Set the window icon
+#icon_path = resource_path('placehold.ico')  # Replace with the path to your .ico file
+#if os.path.exists(icon_path):
+#    root.iconbitmap(icon_path)
+#else:
+#    print(f"Icon file not found at {icon_path}")
 
 # Title label with even spacing
-title_label = ttk.Label(
-    root, text="Marks Typer", font=("Helvetica", 24, "bold"), style="Custom.TLabel"
-)
-title_label.pack(pady=(standard_pad, 0))
+title_label = ttk.Label(root, text="Marks Typer", font=("Helvetica", 24, "bold"), style="Custom.TLabel")
+title_label.pack(pady=(15, 5))
 
 # Apply the custom frame style
-frame = ttk.Frame(root, padding=(standard_pad, 0), style="Custom.TFrame")
-frame.pack(pady=(0, 0), padx=standard_pad, fill="both", expand=False)
+frame = ttk.Frame(root, padding=(15, 15), style="Custom.TFrame")
+frame.pack(pady=(0, 5), padx=10, fill="both", expand=False)
 
 # File selection frame
 words_file_frame = ttk.Frame(frame, style="Custom.TFrame")
-words_file_frame.pack(pady=(standard_pad, 5))
+words_file_frame.pack(pady=(5, 5))
 
 # Select Words File button
-words_file_button = ttk.Button(
-    words_file_frame,
-    text="Select Words File",
-    command=select_words_file,
-    bootstyle="primary",
-    style="Custom.TButton"
-)
+words_file_button = ttk.Button(words_file_frame, text="Select Words File", command=select_words_file, bootstyle="primary", style="Custom.TButton")
 words_file_button.pack(side="left", padx=(0, 5))
 
 # Clear Words File button as a small 'X'
-clear_words_file_button = ttk.Button(
-    words_file_frame,
-    text="X",
-    command=clear_words_file,
-    bootstyle="danger",
-    style="Custom.Small.TButton",
-    width=2
-)
+clear_words_file_button = ttk.Button(words_file_frame, text="X", command=clear_words_file, bootstyle="danger", style="Custom.Small.TButton", width=2)
 clear_words_file_button.pack(side="left")
 
 words_file_label = ttk.Label(frame, text="No file selected", style="Custom.TLabel")
-words_file_label.pack(pady=(0, standard_pad))
+words_file_label.pack()
 
 # Text input with scrollbar
 text_input_label = ttk.Label(frame, text="Or enter text below:", style="Custom.TLabel")
-text_input_label.pack(pady=(0, 5))
+text_input_label.pack(pady=(10, 5))
 
 text_input_frame = ttk.Frame(frame, style="Custom.TFrame")
-text_input_frame.pack(pady=(0, standard_pad))
+text_input_frame.pack(pady=(5, 10))
 
 # Create the Text widget and Scrollbar
-text_input = tk.Text(
-    text_input_frame,
-    height=4,
-    width=45,
-    bg=style.colors.bg,
-    fg=style.colors.light,
-    insertbackground=style.colors.light,
-    highlightthickness=1,
-    highlightbackground=style.colors.border,
-    wrap="word"
-)
+text_input = tk.Text(text_input_frame, height=4, width=45, bg=style.colors.bg, fg=style.colors.light,
+                     insertbackground=style.colors.light, highlightthickness=1, highlightbackground=style.colors.border, wrap="word")
 text_input.pack(side="left", fill="both", expand=True)
 
-text_scrollbar = ttk.Scrollbar(
-    text_input_frame, orient="vertical", command=text_input.yview
-)
+text_scrollbar = ttk.Scrollbar(text_input_frame, orient="vertical", command=text_input.yview)
 text_scrollbar.pack(side="right", fill="y")
 
 text_input.configure(yscrollcommand=text_scrollbar.set)
 text_input.bind("<KeyRelease>", lambda event: save_settings())
 
 # Typing Speed Controls
-speed_label = ttk.Label(
-    frame, text="Typing Speed (Min/Max in ms):", style="Custom.TLabel"
-)
-speed_label.pack(pady=(0, 5))
+speed_label = ttk.Label(frame, text="Typing Speed (Min/Max in ms):", style="Custom.TLabel")
+speed_label.pack(pady=(10, 5))
 
 speed_frame = ttk.Frame(frame, style="Custom.TFrame")
-speed_frame.pack(pady=(0, standard_pad))
+speed_frame.pack(pady=(5, 10))
 
 # Min speed
 speed_slider_min_label = ttk.Label(speed_frame, text="Min", style="Custom.TLabel")
 speed_slider_min_label.grid(row=0, column=0, padx=5)
 
-speed_slider_min = ttk.Scale(
-    speed_frame,
-    from_=10,
-    to=500,
-    orient='horizontal',
-    length=150,
-    command=update_speed_min_label
-)
+speed_slider_min = ttk.Scale(speed_frame, from_=10, to=500, orient='horizontal', length=150, command=update_speed_min_label)
 speed_slider_min.grid(row=1, column=0, padx=5)
 
-speed_slider_min_value_label = ttk.Label(
-    speed_frame, text="", style="Custom.TLabel"
-)
+speed_slider_min_value_label = ttk.Label(speed_frame, text="", style="Custom.TLabel")
 speed_slider_min_value_label.grid(row=2, column=0)
 
 # Max speed
 speed_slider_max_label = ttk.Label(speed_frame, text="Max", style="Custom.TLabel")
 speed_slider_max_label.grid(row=0, column=1, padx=5)
 
-speed_slider_max = ttk.Scale(
-    speed_frame,
-    from_=10,
-    to=500,
-    orient='horizontal',
-    length=150,
-    command=update_speed_max_label
-)
+speed_slider_max = ttk.Scale(speed_frame, from_=10, to=500, orient='horizontal', length=150, command=update_speed_max_label)
 speed_slider_max.grid(row=1, column=1, padx=5)
 
-speed_slider_max_value_label = ttk.Label(
-    speed_frame, text="", style="Custom.TLabel"
-)
+speed_slider_max_value_label = ttk.Label(speed_frame, text="", style="Custom.TLabel")
 speed_slider_max_value_label.grid(row=2, column=1)
 
 # Mistake Frequency Control
-mistake_label = ttk.Label(
-    frame, text="Mistake Frequency (%):", style="Custom.TLabel"
-)
-mistake_label.pack(pady=(0, 5))
+mistake_label = ttk.Label(frame, text="Mistake Frequency (%):", style="Custom.TLabel")
+mistake_label.pack(pady=(10, 5))
 
 mistake_slider_frame = ttk.Frame(frame, style="Custom.TFrame")
-mistake_slider_frame.pack(pady=(0, standard_pad))
+mistake_slider_frame.pack(pady=(5, 10))
 
-mistake_slider = ttk.Scale(
-    mistake_slider_frame,
-    from_=0,
-    to=100,
-    orient='horizontal',
-    length=320,
-    command=update_mistake_slider_label
-)
+mistake_slider = ttk.Scale(mistake_slider_frame, from_=0, to=100, orient='horizontal', length=320, command=update_mistake_slider_label)
 mistake_slider.pack()
 
-mistake_slider_value_label = ttk.Label(
-    mistake_slider_frame, text="", style="Custom.TLabel"
-)
+mistake_slider_value_label = ttk.Label(mistake_slider_frame, text="", style="Custom.TLabel")
 mistake_slider_value_label.pack()
 
 # Start button
-start_button = ttk.Button(
-    frame,
-    text="Start Typing",
-    command=start_typing_with_delay,
-    bootstyle="success",
-    style="Custom.TButton"
-)
-start_button.pack(pady=(standard_pad, standard_pad))
+start_button = ttk.Button(frame, text="Start Typing", command=start_typing_with_delay, bootstyle="success", style="Custom.TButton")
+start_button.pack(pady=(15, 5))
+
+update_button = ttk.Button(root, text="Check for Updates", command=check_for_update)
+update_button.pack(side="bottom", pady=10)
 
 # Footer Label
-footer_label = ttk.Label(
-    root,
-    text="Made by Mark",
-    font=("Helvetica", 10, "italic"),
-    style="Custom.TLabel"
-)
-footer_label.pack(pady=(0, 0))
-
-update_button = ttk.Button(
-    root,
-    text="Check for Updates",
-    command=check_for_update
-)
-update_button.pack(side="bottom", pady=standard_pad)
+footer_label = ttk.Label(frame, text="Made by Mark", font=("Helvetica", 10, "italic"), style="Custom.TLabel")
+footer_label.pack(pady=(5, 0))
 
 # Load settings
 load_settings()
