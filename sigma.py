@@ -19,7 +19,7 @@ import webbrowser
 
 
 def check_for_update():
-    current_version = '0.3'  # Replace with your application's current version
+    current_version = '0.4'  # Replace with your application's current version
     repo_owner = 'metrospeed'
     repo_name = 'sigmatyper'
 
