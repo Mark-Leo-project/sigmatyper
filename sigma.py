@@ -59,7 +59,7 @@ def autotype_with_errors(typing_speed_range, mistake_chance, words_text):
     for token in tokens:
         if keyboard.is_pressed('esc'):
             print("Typing interrupted.")
-            messagebox.showinfo("Typing Interrupted", "You stopped the typing process.")
+            messagebox.showinfo("Typing stopped", "You stopped the typing process.")
             return
 
         if token.isspace():
