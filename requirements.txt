@@ -1,0 +1,9 @@
+requests
+pyautogui
+pyperclip
+keyboard
+ttkbootstrap
+python-docx
+PyPDF2
+tk
+ 
